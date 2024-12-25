@@ -1,0 +1,9 @@
+version: "2"
+
+services:
+  application:
+    container_name: e-commerce-front-container
+    image: nahla126/e-commerce-front
+    ports:
+      - "5000:8080"
+   

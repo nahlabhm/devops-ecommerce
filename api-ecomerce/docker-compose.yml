@@ -1,0 +1,42 @@
+version: "2"
+
+services:
+  api:
+    container_name: e-commerce-back-container
+    env_file:
+       - .env
+    depends_on:
+      - mongodb-service
+    image: nahla126/e-commerce-back
+    ports:
+      - "3001:3000"
+    command: ["sh", "-c" , "npm run seed:db hello@lebondeveloppeur.com admin123 && npm start"]
+    environment:
+      - MONGO_URI=mongodb://mongodb-user:mongodb-pass@mongodb-service:27017/db-ecommerce?authSource=admin
+      - JWT_SECRET=I1eZOSzokm9OIz
+        MONGO_INITDB_ROOT_USERNAME=mongodb-user
+        MONGO_INITDB_ROOT_PASSWORD=mongodb-pass
+        MONGO_INITDB_DATABASE=db-ecommerce
+  
+  mongodb-service:
+    container_name: mongodb-container
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongodb-user
+      MONGO_INITDB_ROOT_PASSWORD: mongodb-pass
+      MONGO_INITDB_DATABASE: db-ecommerce
+    ports:
+      - "27017:27017"
+
+  mongo-express:
+    image: mongo-express
+    depends_on: 
+      - mongodb-service
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: mongodb-user
+      ME_CONFIG_MONGODB_ADMINPASSWORD: mongodb-pass
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb-user:mongodb-pass@mongodb-service:27017/db-ecommerce?authSource=admin
+      ME_CONFIG_BASICAUTH: false
